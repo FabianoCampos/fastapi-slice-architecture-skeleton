@@ -1,0 +1,17 @@
+fastapi>=0.68.0,<0.69.0
+pydantic>=1.8.0,<2.0.0
+alembic
+pymysql
+SQLAlchemy
+python-dotenv
+py-automapper
+injector
+mediatr
+uvicorn
+flake8
+black
+isort
+pytest
+pytest-mock
+pytest-cov
+requests
