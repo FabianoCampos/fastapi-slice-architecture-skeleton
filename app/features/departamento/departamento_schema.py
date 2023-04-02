@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel, Field
 
 
@@ -6,15 +8,14 @@ class DepartamentoBase(BaseModel):
     local: str = Field(
         default=None, title="Local onde está localizado o departamento", max_length=250
     )
-    id_empresa: str = Field(
+    id_empresa: uuid.UUID = Field(
         default=None,
-        title="Id da empresa ao qual pertence o departamento",
-        max_length=36,
+        title="Id da empresa ao qual pertence o departamento"
     )
 
 
 class Departamento(DepartamentoBase):
-    id: str
+    id: uuid.UUID
 
     class Config:
         orm_mode = True

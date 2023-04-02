@@ -1,24 +1,24 @@
 import uuid
-from typing import Any
+from typing import List, Optional
 
-from sqlalchemy import Boolean, Column, String
-from sqlalchemy.orm import relationship
+from sqlmodel import Field, Relationship, SQLModel
 
-from app.infrastructure.db.database import Base
+from app.infrastructure.db.models.departamento import Departamento
 
 
-class Empresa(Base):
+class Empresa(SQLModel, table=True):
     __tablename__ = "empresa"
 
-    id = Column(String(36), primary_key=True, index=True)
-    nome = Column(String(250), nullable=False)
-    logradouro = Column(String(250))
-    cidade = Column(String(150), default=True)
-    estado = Column(String(50), default=True)
-    matriz = Column(Boolean, default=True)
+    id: uuid.UUID = Field(
+        default_factory=uuid.uuid4,
+        primary_key=True,
+        index=True,
+        nullable=False,
+    )
+    nome: str = Field(max_length=250, nullable=False)
+    logradouro: Optional[str] = Field(max_length=250)
+    cidade: Optional[str] = Field(max_length=150)
+    estado: Optional[str] = Field(max_length=50)
+    matriz: bool = Field(nullable=False)
 
-    departamentos = relationship("Departamento", back_populates="empresa")
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self.id = str(uuid.uuid4())
-        super().__init__(*args, **kwargs)
+    departamentos: List["Departamento"] = Relationship(back_populates="empresa")

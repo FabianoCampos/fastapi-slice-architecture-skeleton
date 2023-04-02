@@ -2,7 +2,6 @@ import datetime
 
 from fastapi import APIRouter, Response, status
 from sqlalchemy import text
-from sqlalchemy.exc import SQLAlchemyError
 
 from app.core.config import settings
 from app.features.healthcheck.health_schemas import HealthCheck, StatusHealth
@@ -37,6 +36,6 @@ def is_database_online():
     try:
         session = get_db()
         session.execute(text("SELECT 1"))
-    except (SQLAlchemyError, TimeoutError):
+    except Exception:
         return False
     return True

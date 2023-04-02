@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from mediatr import Mediator
-from sqlalchemy import desc, select
+from sqlmodel import desc, select
 
 from app.features.base_cqrs_handler import BaseCqrsHandler
 from app.infrastructure.db.models.empresa import Empresa

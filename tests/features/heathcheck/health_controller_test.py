@@ -1,10 +1,11 @@
 from unittest.mock import Mock
 
 from fastapi.testclient import TestClient
-from app.features.healthcheck.health_controller import is_database_online
-
-from app.features.healthcheck.health_schemas import StatusHealth
 from sqlalchemy.exc import SQLAlchemyError
+
+from app.features.healthcheck.health_controller import is_database_online
+from app.features.healthcheck.health_schemas import StatusHealth
+
 
 def test_health_status_healthy(client: TestClient, mocker) -> None:
     fnmock = Mock()
@@ -37,15 +38,15 @@ def test_health_status_unhealthy(client: TestClient, mocker) -> None:
 
 
 def test_database_online_ok(mocker):
-    fnmock = Mock()
     mocker.patch("app.infrastructure.db.database.get_db", Mock())
     mocker.patch("sqlalchemy.orm.Session.execute", Mock())
     result = is_database_online()
-    assert result == True
+    assert result is True
+
 
 def test_database_online_fail(mocker):
     mocker.patch("app.infrastructure.db.database.get_db", Mock())
     fnmock = Mock(side_effect=SQLAlchemyError("conflito"))
     mocker.patch("sqlalchemy.orm.Session.execute", fnmock)
     result = is_database_online()
-    assert result == False
+    assert result is False

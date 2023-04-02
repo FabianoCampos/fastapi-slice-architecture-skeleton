@@ -1,19 +1,18 @@
 import uuid
-from typing import Any
+from typing import Optional
 
-from sqlalchemy import Column, String
-
-from app.infrastructure.db.database import Base
+from sqlmodel import Field, SQLModel
 
 
-class Pessoa(Base):
+class Pessoa(SQLModel, table=True):
     __tablename__ = "pessoa"
 
-    id = Column(String(36), primary_key=True, index=True)
-    nome = Column(String(200), nullable=False)
-    email = Column(String(250))
-    telefone = Column(String(20))
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self.id = str(uuid.uuid4())
-        super().__init__(*args, **kwargs)
+    id: uuid.UUID = Field(
+        default_factory=uuid.uuid4,
+        primary_key=True,
+        index=True,
+        nullable=False,
+    )
+    nome: str = Field(max_length=200, nullable=False)
+    email: Optional[str] = Field(max_length=250)
+    telefone: Optional[str] = Field(max_length=20)
