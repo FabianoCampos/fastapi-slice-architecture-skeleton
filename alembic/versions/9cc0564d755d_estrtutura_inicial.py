@@ -1,7 +1,7 @@
 """Estrtutura inicial
 
 Revision ID: 9cc0564d755d
-Revises: 
+Revises:
 Create Date: 2023-04-02 14:19:33.777120
 
 """

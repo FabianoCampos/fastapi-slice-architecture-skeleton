@@ -9,8 +9,7 @@ class DepartamentoBase(BaseModel):
         default=None, title="Local onde está localizado o departamento", max_length=250
     )
     id_empresa: uuid.UUID = Field(
-        default=None,
-        title="Id da empresa ao qual pertence o departamento"
+        default=None, title="Id da empresa ao qual pertence o departamento"
     )
 
 

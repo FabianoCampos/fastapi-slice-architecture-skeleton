@@ -28,9 +28,11 @@ def run_sql_migrations():
     config.set_main_option("script_location", migrations_dir)
     config.set_main_option("sqlalchemy.url", settings.database_url)
     config.set_section_option("logger_alembic", "level", settings.logging_level.upper())
-    config.set_section_option("logger_sqlalchemy", "level", settings.logging_level.upper())
+    config.set_section_option(
+        "logger_sqlalchemy", "level", settings.logging_level.upper()
+    )
     config.set_section_option("logger_fastapi", "level", settings.logging_level.upper())
-    config.attributes['configure_logger'] = False
-    
+    config.attributes["configure_logger"] = False
+
     # upgrade the database to the latest revision
     upgrade(config, "head")
