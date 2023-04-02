@@ -37,7 +37,7 @@
 
 Executando todos os testes
 ```bash
-pytest --cov=app /tests
+pytest --cov=app ./tests
 ```
 
 Gerando informações sobre cobertura de testes
