@@ -1,22 +1,23 @@
 import uuid
-from typing import Any
+from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, ForeignKey, String
-from sqlalchemy.orm import relationship
+from sqlmodel import Field, Relationship, SQLModel
 
-from app.infrastructure.db.database import Base
+if TYPE_CHECKING:
+    from .empresa import Empresa
 
 
-class Departamento(Base):
+class Departamento(SQLModel, table=True):
     __tablename__ = "departamento"
 
-    id = Column(String(36), primary_key=True, index=True)
-    nome = Column(String(200), nullable=False)
-    local = Column(String(200), nullable=False)
-    id_empresa = Column(String(36), ForeignKey("empresa.id"))
+    id: uuid.UUID = Field(
+        default_factory=uuid.uuid4,
+        primary_key=True,
+        index=True,
+        nullable=False,
+    )
+    nome: str = Field(max_length=200, nullable=False)
+    local: str = Field(max_length=200, nullable=False)
+    id_empresa: uuid.UUID = Field(foreign_key="empresa.id")
 
-    empresa = relationship("Empresa", back_populates="departamentos")
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self.id = str(uuid.uuid4())
-        super().__init__(*args, **kwargs)
+    empresa: "Empresa" = Relationship(back_populates="departamentos")

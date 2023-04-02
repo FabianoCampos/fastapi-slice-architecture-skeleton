@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from automapper import mapper
 from mediatr import Mediator
-from sqlalchemy import select
+from sqlmodel import select
 
 from app.features.base_cqrs_handler import BaseCqrsHandler
 from app.infrastructure.db.models.departamento import Departamento

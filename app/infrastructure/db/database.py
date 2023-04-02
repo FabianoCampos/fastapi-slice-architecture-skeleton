@@ -1,43 +1,33 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from sqlmodel import Session, create_engine
 
 from app.core.config import settings
 
-Base = declarative_base()
-
 
 class DatabaseContext:
-    db: Session = None
-    SessionLocal: sessionmaker[Session] = None
+    __db: Session = None
 
     @staticmethod
-    def init_db():
+    def __init_db():
         engine = create_engine(settings.database_url, pool_pre_ping=True)
-        DatabaseContext.SessionLocal = sessionmaker(
-            autocommit=False, autoflush=False, bind=engine
-        )
+        DatabaseContext.__db = Session(engine)
 
     @staticmethod
     def get_db() -> Session:
-        if (
-            not DatabaseContext.SessionLocal
-            or isinstance(DatabaseContext.db, Session) is False
-        ):
-            DatabaseContext.init_db()
-            DatabaseContext.db = DatabaseContext.SessionLocal()
+        if isinstance(DatabaseContext.__db, Session) is False:
+            DatabaseContext.__init_db()
 
-        return DatabaseContext.db
+        return DatabaseContext.__db
 
     @staticmethod
     def close_conn():
-        if DatabaseContext.db:
-            DatabaseContext.db.close_all()
+        if DatabaseContext.__db:
+            DatabaseContext.__db.close_all()
 
     @staticmethod
     def commit():
-        db = DatabaseContext.db
+        db = DatabaseContext.__db
         if db and db.new or db.deleted or db.dirty:
-            DatabaseContext.db.commit()
+            DatabaseContext.__db.commit()
 
 
 def get_db():

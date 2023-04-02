@@ -1,20 +1,27 @@
-from logging.config import fileConfig
-import os
 import pathlib
 import sys
+from importlib import import_module
+from logging.config import fileConfig
+from pathlib import Path
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
+from sqlmodel import SQLModel
 
 from alembic import context
 from app.core.config import settings
 
+
 def import_models() -> None:
-    models_dir = os.path.join(os.getcwd(), "app", "infrastructure", "db", "models")
-    for entry in os.scandir(models_dir):
-        if entry.is_file():
-            exec(f"from app.infrastructure.db.models import {entry.name}"[:-3])
-            
+    models_dir = Path.cwd() / "app" / "infrastructure" / "db" / "models"
+    for entry in models_dir.iterdir():
+        if entry.is_file() and entry.suffix == ".py":
+            module_name = f"app.infrastructure.db.models.{entry.stem}"
+            try:
+                import_module(module_name)
+            except ImportError as e:
+                print(f"Falha ao importar {module_name}: {e}")
+
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -23,16 +30,18 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+if config.config_file_name is not None and config.attributes.get(
+    "configure_logger", True
+):
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from app.infrastructure.db import database
 
-target_metadata = database.Base.metadata
+
+target_metadata = SQLModel.metadata
 import_models()
 
 
@@ -40,9 +49,8 @@ target_metadata.naming_convention = {
     "ix": "ix_%(column_0_label)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",
     "ck": "ck_%(table_name)s_%(constraint_name)s",
-    "fk": "fk_%(table_name)s_%(column_0_name)"
-          "s_%(referred_table_name)s",
-    "pk": "pk_%(table_name)s"
+    "fk": "fk_%(table_name)s_%(column_0_name)" "s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s",
 }
 
 # other values from the config, defined by the needs of env.py,
@@ -69,7 +77,6 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        include_object=filter_db_objects
     )
 
     with context.begin_transaction():
@@ -91,9 +98,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel, Field
 
 
@@ -14,7 +16,7 @@ class EmpresaBase(BaseModel):
 
 
 class Empresa(EmpresaBase):
-    id: str
+    id: uuid.UUID
 
     class Config:
         orm_mode = True
