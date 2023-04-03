@@ -3,18 +3,22 @@
 
 1. Criar um ambiente virtual
    ```bash
-   python -m venv venv
+    poetry config virtualenvs.in-project true
+    poetry install
    ```
    > Após a primeira execução não será necessário reexecutar o este passo
 
 2. Ativar o ambiente virtual
    ```bash
-   source venv/bin/activate
+   poetry shell
    ```
 
-3. Instalar as dependências
+3. Instalar novas dependências
    ```bash
-   pip install -r requirements.txt
+   poetry add <lib>
+   ```
+   ```bash
+   poetry add <lib> --group dev
    ```
 
 4. Subir o servidor local com uvicorn
